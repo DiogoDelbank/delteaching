@@ -15,6 +15,7 @@ export type BankAccountProps = {
     holderEmail: string;
     holderDocument: string;
     holderType: EHolderType;
+    bankAccountNumber: string;
 }
 
 @Entity({ name: 'BankAccounts', schema: 'BankAccounts' })
@@ -68,6 +69,7 @@ export class BankAccount {
     public updatedAt: Date;
 
     public create(props: BankAccountProps): this {
+        this.number = props.bankAccountNumber;
         this.holderName = props.holderName;
         this.holderEmail = props.holderEmail;
         this.holderDocument = props.holderDocument;

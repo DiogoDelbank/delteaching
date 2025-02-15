@@ -14,6 +14,7 @@ export class CreateBankAccountUseCase {
     
     public async execute(command: CreateBankaAccountCommand): Promise<void> {
         const bankAccount = new BankAccount().create({
+            bankAccountNumber: command.bankAccountNumber,
             holderName: command.holderName,
             holderDocument: command.holderDocument,
             holderEmail: command.holderEmail,
