@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { GetBankAccountDetailsQuery } from "./get-bank-account-details.query";
-import { BankAcocuntDto } from "@domain/dtos/bank-account.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BankAccount } from "@domain/aggregates/bank-accounts/bank-account.entity";
 import { Repository } from "typeorm";

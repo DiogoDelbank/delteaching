@@ -25,6 +25,7 @@ export class BankAccount {
     private static readonly bankAccountNumberMaxLength = 10;
     private static readonly bankAccountNumberMinLength = 5;
     private static readonly holderDocumentMaxLength = 14;
+    private static readonly holderDocumentMinLength = 11;
     private static readonly branchMaxLength = 5;
 
     @PrimaryGeneratedColumn({ type: 'int' })
@@ -93,15 +94,17 @@ export class BankAccount {
 
     private static validate(bankAccount: BankAccount) {
         const bankAccountSchema = z.object({
-            branch: z.string().min(1, 'O campo "agência" não pode estar vazio.')
-                .max(BankAccount.branchMaxLength, `O campo "agência" deve ter no máximo ${BankAccount.branchMaxLength} caracteres.`),
-            number: z.string().min(BankAccount.bankAccountNumberMinLength, `O número da conta bancária deve ter no mínimo ${BankAccount.bankAccountNumberMinLength} caracteres.`)
-                .max(BankAccount.bankAccountNumberMaxLength, `O número da conta bancária deve ter no máximo ${BankAccount.bankAccountNumberMaxLength} caracteres.`),
-            holderName: z.string().min(1, 'O campo "nome do titular" não pode estar vazio.')
-                .max(BankAccount.holderNameMaxLength, `O nome do titular deve ter no máximo ${BankAccount.holderNameMaxLength} caracteres.`),
+            branch: z.string().min(1, { message: 'O campo "agência" não pode estar vazio.' })
+                .max(BankAccount.branchMaxLength, { message: `O campo "agência" deve ter no máximo ${BankAccount.branchMaxLength} caracteres.` }),
+            number: z.string().min(BankAccount.bankAccountNumberMinLength, { message: `O número da conta bancária deve ter no mínimo ${BankAccount.bankAccountNumberMinLength} caracteres.` })
+                .max(BankAccount.bankAccountNumberMaxLength, { message: `O número da conta bancária deve ter no máximo ${BankAccount.bankAccountNumberMaxLength} caracteres.` }),
+            holderName: z.string().min(1, { message: 'O campo "nome do titular" não pode estar vazio.' })
+                .max(BankAccount.holderNameMaxLength, { message: `O nome do titular deve ter no máximo ${BankAccount.holderNameMaxLength} caracteres.` }),
             holderEmail: z.string().email('Formato de e-mail inválido.')
                 .max(BankAccount.holderEmailMaxLength, `O campo "e-mail" deve ter no máximo ${BankAccount.holderEmailMaxLength} caracteres.`),
-            holderDocument: z.string().length(BankAccount.holderDocumentMaxLength, `O documento do titular deve ter exatamente ${BankAccount.holderDocumentMaxLength} caracteres.`),
+            holderDocument: z.string()
+                .min(BankAccount.holderDocumentMinLength, `O documento do titular deve ter no mínimo ${BankAccount.holderDocumentMinLength} caracteres.`)
+                .min(BankAccount.holderDocumentMaxLength, `O documento do titular deve ter no máximo ${BankAccount.holderDocumentMaxLength} caracteres.`)
         });
 
         const result = bankAccountSchema.safeParse(bankAccount);
