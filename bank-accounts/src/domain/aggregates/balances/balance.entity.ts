@@ -1,6 +1,8 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import { BankAccount } from "../bank-accounts/bank-account.entity";
 import { z } from "zod";
+import { DomainException } from "@domain/common/domain-exception";
+import { HttpStatus } from "@nestjs/common";
 
 @Entity({ name: 'Balances', schema: 'BankAccounts' })
 export class Balance {
@@ -31,7 +33,7 @@ export class Balance {
 
         const result = balanceSchema.safeParse(balance);
         if (!result.success) {
-            throw new Error(`Falha na validação: ${result.error.errors.map(e => e.message).join(', ')}`);
+            throw new DomainException(result.error?.errors[0]?.message, HttpStatus.BAD_REQUEST);
         }
     }
 

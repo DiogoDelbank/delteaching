@@ -5,6 +5,8 @@ import { EBankAccountStatus } from "./bank-account-status.enum";
 import { Balance } from "../balances/balance.entity";
 import { z } from "zod";
 import { Transaction } from "../transactions/transaction.entity";
+import { DomainException } from "@domain/common/domain-exception";
+import { HttpStatus } from "@nestjs/common";
 
 export type BankAccountProps = {
     branch: string;
@@ -100,19 +102,23 @@ export class BankAccount {
             holderEmail: z.string().email('Formato de e-mail inválido.')
                 .max(BankAccount.holderEmailMaxLength, `O campo "e-mail" deve ter no máximo ${BankAccount.holderEmailMaxLength} caracteres.`),
             holderDocument: z.string().length(BankAccount.holderDocumentMaxLength, `O documento do titular deve ter exatamente ${BankAccount.holderDocumentMaxLength} caracteres.`),
-            holderType: z.nativeEnum(EHolderType, { message: 'Tipo de titular inválido.' }),
-            type: z.nativeEnum(EBankAccountType, { message: 'Tipo de conta bancária inválido.' }),
         });
 
         const result = bankAccountSchema.safeParse(bankAccount);
         if (!result.success) {
-            throw new Error(`Falha na validação: ${result.error.errors.map(e => e.message).join(', ')}`);
+            throw new DomainException(result.error?.errors[0]?.message, HttpStatus.BAD_REQUEST);
         }
     }
 
     public updateEmail(email: string): this {
         this.holderEmail = email;
         BankAccount.validate(this);
+        return this;
+    }
+
+    public updateStatus(status: EBankAccountStatus): this {
+        this.status = status;
+        BankAccount.validate(this)
         return this;
     }
 }

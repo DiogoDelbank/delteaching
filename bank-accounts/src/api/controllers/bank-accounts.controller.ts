@@ -6,13 +6,16 @@ import { UpdateHolderEmailUseCase } from "@application/use-cases/update-holder-e
 import { UpdateHolderEmailCommand } from "@application/use-cases/update-holder-email/update-holder-email.command";
 import { BankAcocuntDto } from "@domain/dtos/bank-account.dto";
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from "@nestjs/common";
+import { UpdateBankAccountStatusCommand } from "@application/use-cases/update-bank-account-status/update-bank-account-status.command";
+import { UpdateBankAccountStatusUseCase } from "@application/use-cases/update-bank-account-status/update-bank-account.usecase";
 
 @Controller('/api/bank-accounts')
 export class BankAccountsController {
     constructor(
         private readonly createBankAccountUseCase: CreateBankAccountUseCase,
         private readonly getBankAccountUseCase: GetBankAccountUseCase,
-        private readonly updateHolderEmailUseCase: UpdateHolderEmailUseCase
+        private readonly updateHolderEmailUseCase: UpdateHolderEmailUseCase,
+        private readonly updateBankAccountStatusUseCase: UpdateBankAccountStatusUseCase
     ) {}
 
     @Post()
@@ -35,6 +38,14 @@ export class BankAccountsController {
         return result;
     }
 
+    @Get('/:bankAccountNumber')
+    @HttpCode(HttpStatus.OK)
+    public async getDetails(
+        @Param('bankAccountNumber') bankAccountNumber: string
+    ) {
+        
+    }
+
     @Patch('/:bankAccountNumber/contacts')
     @HttpCode(HttpStatus.NO_CONTENT)
     public async updateEmail(
@@ -43,5 +54,15 @@ export class BankAccountsController {
     ): Promise<void> {
         command.bankAccountNumber = bankAccountNumber;
         await this.updateHolderEmailUseCase.execute(command);
+    }
+
+    @Patch('/:bankAccountNumber/status')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    public async updateStatus(
+        @Param('bankAccountNumber') bankAccountNumber: string, 
+        @Body() command: UpdateBankAccountStatusCommand
+    ) {
+        command.bankAccountNumber = bankAccountNumber;
+        await this.updateBankAccountStatusUseCase.execute(command);
     }
 }
