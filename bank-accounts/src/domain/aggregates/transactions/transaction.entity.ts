@@ -4,6 +4,8 @@ import { EBankAccountType } from "../bank-accounts/bank-account-type.enum";
 import { ETransactionType } from "./transaction-type.enum";
 import { EHolderType } from "../bank-accounts/holder-type.enum";
 import { z } from 'zod';
+import { HttpStatus } from "@nestjs/common";
+import { DomainException } from "@domain/common/domain-exception";
 
 export type TransactionProps = {
     type: ETransactionType;
@@ -105,17 +107,14 @@ export class Transaction {
                 message: `O documento do titular da contraparte deve ter ${Transaction.holderDocumentMaxLength} caracteres.`,
             }).regex(/^\d{11}$|^\d{14}$/, {
                 message: 'O documento do titular da contraparte deve ser um CPF (11 dígitos) ou CNPJ (14 dígitos) válido.',
-            }),
-            type: z.nativeEnum(ETransactionType, {
-                message: 'O tipo de transação é inválido.',
-            }),
+            })
         });
 
         try {
             schema.parse(transaction);
         } catch (error) {
             if (error instanceof z.ZodError) {
-                throw new Error(error.errors.map(err => err.message).join(', '));
+                throw new DomainException(error?.errors[0]?.message, HttpStatus.BAD_REQUEST);
             }
             throw error;
         }
