@@ -30,7 +30,7 @@ export default function CreateAccountPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3030/api/bank-accounts", {
+      const response = await fetch("http://bank-accounts/api/bank-accounts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
