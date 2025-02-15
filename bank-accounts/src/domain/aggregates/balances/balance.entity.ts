@@ -19,16 +19,17 @@ export class Balance {
     @Column({ type: 'decimal', precision: 18, scale: 2 })
     public blockedAmount: number;
 
-    public create(bankAccount: BankAccount) {
+    public create(bankAccount: BankAccount): this {
         this.bankAccount = bankAccount;
         this.availableAmount = 0;
         this.blockedAmount = 0;
+        return this;
     }
 
     private static validate(balance: Balance) {
         const balanceSchema = z.object({
-            availableAmount: z.number().min(0, 'O valor disponível não pode ser negativo.'),
-            blockedAmount: z.number().min(0, 'O valor bloqueado não pode ser negativo.'),
+            availableAmount: z.number().min(0, { message: 'O valor disponível não pode ser negativo.' }),
+            blockedAmount: z.number().min(0, { message: 'O valor bloqueado não pode ser negativo.' }),
         });
 
         const result = balanceSchema.safeParse(balance);

@@ -8,6 +8,8 @@ import { BankAcocuntDto } from "@domain/dtos/bank-account.dto";
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from "@nestjs/common";
 import { UpdateBankAccountStatusCommand } from "@application/use-cases/update-bank-account-status/update-bank-account-status.command";
 import { UpdateBankAccountStatusUseCase } from "@application/use-cases/update-bank-account-status/update-bank-account.usecase";
+import { GetBankAccountDetailsUseCase } from "@application/use-cases/get-bank-account-details/get-bank-account-details.usecase";
+import { GetBankAccountDetailsQuery } from "@application/use-cases/get-bank-account-details/get-bank-account-details.query";
 
 @Controller('/api/bank-accounts')
 export class BankAccountsController {
@@ -15,7 +17,8 @@ export class BankAccountsController {
         private readonly createBankAccountUseCase: CreateBankAccountUseCase,
         private readonly getBankAccountUseCase: GetBankAccountUseCase,
         private readonly updateHolderEmailUseCase: UpdateHolderEmailUseCase,
-        private readonly updateBankAccountStatusUseCase: UpdateBankAccountStatusUseCase
+        private readonly updateBankAccountStatusUseCase: UpdateBankAccountStatusUseCase,
+        private readonly getBankAccountDetailsUseCase: GetBankAccountDetailsUseCase
     ) {}
 
     @Post()
@@ -43,7 +46,8 @@ export class BankAccountsController {
     public async getDetails(
         @Param('bankAccountNumber') bankAccountNumber: string
     ) {
-        
+        const query: GetBankAccountDetailsQuery = { bankAccountNumber }
+        return await this.getBankAccountDetailsUseCase.execute(query);
     }
 
     @Patch('/:bankAccountNumber/contacts')
