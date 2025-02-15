@@ -1,9 +1,10 @@
 import { BankAccount } from "@domain/aggregates/bank-accounts/bank-account.entity";
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateBankaAccountCommand } from "./create-bank-account.command";
 import { Balance } from "@domain/aggregates/balances/balance.entity";
+import { DomainException } from "@domain/common/domain-exception";
 
 @Injectable()
 export class CreateBankAccountUseCase {
@@ -22,6 +23,10 @@ export class CreateBankAccountUseCase {
             type: command.bankAccountType,
             branch: command.branch
         });
+
+        if (await this.bankAccountRepository.findOneBy({ number: command.bankAccountNumber })) {
+            throw new DomainException("Já existe uma conta com o número informado.", HttpStatus.CONFLICT)
+        }
 
         const balance = new Balance().create(bankAccount);
 
