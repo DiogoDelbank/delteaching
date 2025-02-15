@@ -1,0 +1,15 @@
+version: '3'
+services:
+  bank-accounts:
+    build:
+      context: .
+      dockerfile: bank-accounts/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: "24.144.81.115"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "delteaching123"
+      DB_NAME: "postgres"
+      PORT: "3000"
