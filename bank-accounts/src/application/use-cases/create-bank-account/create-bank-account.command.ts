@@ -2,6 +2,7 @@ import { EBankAccountType } from "@domain/aggregates/bank-accounts/bank-account-
 import { EHolderType } from "@domain/aggregates/bank-accounts/holder-type.enum";
 
 export abstract class CreateBankaAccountCommand {
+    public abstract bankAccountNumber: string;
     public abstract holderName: string;
     public abstract holderEmail: string;
     public abstract holderDocument: string;
